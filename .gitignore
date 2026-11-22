@@ -1,0 +1,16 @@
+﻿# Build output
+target/
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Secrets - never commit
+.env
+
+# Logs and OS files
+logs/
+*.log
+.DS_Store
+Thumbs.db
