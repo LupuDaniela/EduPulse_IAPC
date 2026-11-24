@@ -4,6 +4,34 @@
 spring:
   application:
     name: ingest-static
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5434/therapypulse}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:}
+  ai:
+    model:
+      embedding: ollama
+      chat: none
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      init:
+        pull-model-strategy: when_missing
+      embedding:
+        options:
+          model: ${APP_EMBEDDING_MODEL:nomic-embed-text}
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        dimensions: ${EMBEDDING_DIMENSIONS:768}
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+
+app:
+  ingest:
+    chunk-size: ${APP_CHUNK_SIZE:800}
+    chunk-overlap: ${APP_CHUNK_OVERLAP:100}
+    embedding-model: ${APP_EMBEDDING_MODEL:nomic-embed-text}
+    resources-dir: ${APP_RESOURCES_DIR:./resources}
 
 eureka:
   client:

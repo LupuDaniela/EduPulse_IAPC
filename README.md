@@ -9,7 +9,7 @@ Scope: Epic 1 (RAG), Story 1 – Static ingestion resource
 | Module         | Port | What it does                                       |
 |----------------|------|----------------------------------------------------|
 | eureka-server  | 8761 | Service registry                                   |
-| api-gateway    | 8080 | Single public entry point, routes via Eureka       |
+| api-gateway    | 8090 | Single public entry point, routes via Eureka       |
 | ingest-static  | 8081 | PDF ingestion from `./resources` (Epic 1, Story 1) |
 | ingest-dynamic | 8082 | Internet ingestion (not in scope yet)              |
 | retrieval-pre  | 8083 | Pre-retrieval pipeline (not in scope yet)          |
@@ -64,3 +64,18 @@ are bound to localhost. The services are reachable only through the gateway.
 
 **How to verify:** `docker compose up --build -d`, then `docker compose ps` shows all services healthy,
 and `GET http://localhost:8080/ingest-static/ping` works.
+
+### Commit 3
+## Configuration (ingest-static)
+
+| Variable | Default | What it does |
+|---|---|---|
+| `APP_CHUNK_SIZE` | 800 | Size of each chunk |
+| `APP_CHUNK_OVERLAP` | 100 | How much two chunks overlap (must be smaller than the chunk size) |
+| `APP_EMBEDDING_MODEL` | nomic-embed-text | Ollama embedding model |
+| `EMBEDDING_DIMENSIONS` | 768 | Vector size, must match the model |
+| `APP_RESOURCES_DIR` | ./resources | Folder with the PDFs |
+
+Every chunk carries this metadata: `doc_id, version, source, page, chunk_index, checksum`.
+- `doc_id` comes from the file's path inside `resources`, so it stays the same when the file changes.
+- `checksum` is the SHA-256 of the file, so a changed file is easy to detect.
